@@ -1,0 +1,44 @@
+services:
+  postgres:
+    container_name: hestia_db
+    image: postgres:latest
+    restart: always
+    volumes:
+      - hestia_db_data:/var/lib/postgresql/data
+    ports:
+      - "6000:5432"
+    environment:
+      POSTGRES_DB: hestia_db
+      POSTGRES_USER: hestia_db
+      POSTGRES_PASSWORD: u1wVreGixnrQsVFVq
+      POSTGRES_HOST_AUTH_METHOD: password
+      PGDATA: /var/lib/postgresql/data/pgdata
+
+  app:
+    build: .
+    ports:
+      - "8001:8000"
+    environment:
+      APP_NAME: Hestia
+      port: 8000
+      NODE_ENV: development
+      DEBUG: express:*
+      DATABASE_URL: "postgresql://hestia_db:u1wVreGixnrQsVFVq@localhost:5432/hestia_db?connect_timeout=300&schema=public"
+    command:
+      - bash
+      - "-c"
+      - "npx prisma migrate deploy && npm run dev"
+    depends_on:
+      - postgres
+    develop:
+      watch:
+        - action: sync
+          path: ./
+          target: /usr/hestia/
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: ./package.json
+
+volumes:
+  hestia_db_data: {}

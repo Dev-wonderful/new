@@ -1,0 +1,58 @@
+model Roles {
+	id    Int     @id @default(autoincrement())
+	name  String	@unique
+	createdAt DateTime 		@default(now())
+	updatedAt 	DateTime 	@updatedAt
+
+	users Users[]
+}
+
+enum USER_STATUS {
+	ACTIVE
+	INACTIVE
+	BLOCKED
+	DELETED
+}
+
+model Users {
+  id    		String     @id @default(uuid())
+  name  		String
+  email 		String  @unique
+	password 	String
+	status 		USER_STATUS
+	role			String
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+	deletedAt DateTime?
+	estate 		String
+	token			Tokens?
+
+	roleDetails		Roles	@relation(fields: [role], references: [name])
+	profile 			Profiles?
+	estateDetails Estates @relation(fields: [estate], references: [name])
+}
+
+model Profiles {
+	id    Int     @id @default(autoincrement())
+	userId  String	@unique
+	firstName  String
+	lastName  String
+	middleName	String?
+	phoneNumber  String
+	avatar	String
+	address String
+	createdAt DateTime @default(now())
+	updatedAt 	DateTime @updatedAt
+
+	user  Users @relation(fields: [userId], references: [id])
+}
+
+model Tokens {
+	id    	Int     @id @default(autoincrement())
+	userId  String	@unique
+	token  	String
+	createdAt 	DateTime @default(now())
+	expiringAt 	DateTime
+
+	user  Users @relation(fields: [userId], references: [id])
+}

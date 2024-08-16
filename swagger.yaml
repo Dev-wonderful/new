@@ -1,0 +1,168 @@
+openapi: 3.1.0
+info:
+  title: Hestia API
+  description: Transforming Estate Living
+  termsOfService: /terms-of-use/
+  contact:
+    email: dev@hestia.xyz
+  version: v1
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
+servers:
+  - url: http://localhost:8000/api/v1
+tags:
+  - name: Auth
+    description: Authentication and Authorization of users and estate admins
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Create a new user account.
+      description: User registration to create an account on the platform.
+      operationId: user-registration
+      requestBody:
+        description: User details.
+        required: true
+        content:
+          application/json:
+            example:
+              {
+                "first_name": "Wonderful",
+                "middle_name": "Wonder",
+                "last_name": "Adeyemo",
+                "email": "ade@gmail.com",
+                "password": "pass1234",
+                "phone_number": "08030005082",
+                "avatarUrl": "https://avatar.com/random",
+                "address": "123, noble close, Diamond Estate, Lagos",
+                "estate": "Diamond",
+              }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              example:
+                {
+                  "success": true,
+                  "message": "User Created Successfully. Kindly check your mail for your verification token",
+                  "data":
+                    {
+                      "user":
+                        {
+                          "id": "1944c5c1-c7a6-4b9a-9e63-2c4e32d82bfe",
+                          "first_name": "Wonderful",
+                          "last_name": "Adeyemo",
+                          "email": "ade@gmail.com",
+                          "role": "resident",
+                          "avatar_url": "https://avatar.com/random",
+                        },
+                      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTk0NGM1YzEtYzdhNi00YjlhLTllNjMtMmM0ZTMyZDgyYmZlIiwiaWF0IjoxNzIzNzQ0MDMzLCJleHAiOjE3MjM4MzA0MzN9.PKhxwThP1VMg50LB06cj3UcEj-t9JwsRlA0Scn3v7wM",
+                    },
+                }
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              example: { success: false, message: "User already exists" }
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              example:
+                {
+                  success: false,
+                  message: "server error, this will be resolved shortly!",
+                }
+
+  /auth/verify-otp:
+    post:
+      tags:
+        - Auth
+      summary: Verify email.
+      description: Verify registered email through the OTP sent to the email.
+      operationId: Account-verification
+      requestBody:
+        description: User details.
+        required: true
+        content:
+          application/json:
+            example: { "email": "ade@gmail.com", "token": "171991" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              example:
+                {
+                  "success": true,
+                  "message": "Email verified successfully",
+                  "data":
+                    {
+                      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTk0NGM1YzEtYzdhNi00YjlhLTllNjMtMmM0ZTMyZDgyYmZlIiwiaWF0IjoxNzIzNzQ0NjExLCJleHAiOjE3MjM4MzEwMTF9.4M99w09mTjn2wp457VMqev27AwOEZZm_4clQ24xOrpU",
+                    },
+                }
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              example:
+                {
+                  success: false,
+                  message: "server error, this will be resolved shortly!",
+                }
+
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: User Login.
+      description: User login to the platform.
+      operationId: user-Login
+      requestBody:
+        description: User credentials.
+        required: true
+        content:
+          application/json:
+            example: { "email": "ade@gmail.com", "password": "********" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              example:
+                {
+                  "status": 200,
+                  "message": "Login successful",
+                  "status_code": 200,
+                  "data":
+                    {
+                      "user":
+                        {
+                          "id": "1944c5c1-c7a6-4b9a-9e63-2c4e32d82bfe",
+                          "first_name": "Wonderful",
+                          "last_name": "Adeyemo",
+                          "email": "ade@gmail.com",
+                          "role": "resident",
+                          "avatar_url": "https://avatar.com/random",
+                        },
+                      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTk0NGM1YzEtYzdhNi00YjlhLTllNjMtMmM0ZTMyZDgyYmZlIiwiaWF0IjoxNzIzNzQ0NzcyLCJleHAiOjE3MjM4MzExNzJ9.mwaoHpHYyJse4HagSADQOPS24BHukYFRpRB7mZnkYRI",
+                    },
+                }
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              example:
+                {
+                  success: false,
+                  message: "server error, this will be resolved shortly!",
+                }
